@@ -61,6 +61,12 @@ document.addEventListener("click", (event) => {
         .then(string => {
     
             console.log(string);
+            console.log(typeof string);
+            (async () => {
+                const response = await chrome.runtime.sendMessage(string);
+                // do something with response here, not outside the function
+                console.log(response);
+              })();
     
             console.log(`Title of our response : ` + string.Title);
             
@@ -77,6 +83,14 @@ document.addEventListener("click", (event) => {
         .catch(errorMsg => { console.log(errorMsg); });
         //result.textContent = `You like ${event.target.value}`;
 }
-
+chrome.runtime.onMessage.addListener(
+    function(request, sender, sendResponse) {
+      console.log(sender.tab ?
+                  "from a content script:" + sender.tab.url :
+                  "from the extension");
+      if (request.greeting === "hello")
+        sendResponse({farewell: "goodbye"});
+    }
+  );
 
   
